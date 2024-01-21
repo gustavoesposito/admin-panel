@@ -12,7 +12,7 @@ Clone command: git clone https://github.com/gustavoesposito/admin-panel.git
 
 ```
 yarn install
-#or
+# or
 npm install
 ```
 
