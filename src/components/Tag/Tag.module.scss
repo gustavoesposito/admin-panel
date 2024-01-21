@@ -1,0 +1,28 @@
+$positiveTextColor: #228340;
+$positiveBackgroundColor: #ebf9ef;
+$negativeTextColor: #ea4356;
+$negativeBackgroundColor: #fdf2f3;
+
+.tagHolder {
+  border-radius: 16px;
+  max-width: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  &.positive {
+    background-color: #ebf9ef;
+  }
+  &.negative {
+    background-color: #fdf2f3;
+  }
+}
+
+.tagText {
+  padding: 8px 0 8px 0;
+  &.positive {
+    color: #228340;
+  }
+  &.negative {
+    color: #ea4356;
+  }
+}
