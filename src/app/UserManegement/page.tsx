@@ -345,9 +345,7 @@ export default function UserManagement() {
                 </RadioGroup>
               </PopoverSortOptions>
 
-              <PopoverSortOptions title="Filtrar"></PopoverSortOptions>
-
-              <Button onClick={handleOpenFilterPanel}>Filtrar</Button>
+              <PopoverSortOptions title="Filtrar" onClick={handleOpenFilterPanel}></PopoverSortOptions>
             </Box>
 
             {isFilterPanelOpen && <FilterPanel />}

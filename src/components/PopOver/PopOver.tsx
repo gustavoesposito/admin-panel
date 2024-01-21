@@ -6,9 +6,10 @@ import ChevronDownIcon from '@mui/icons-material/ExpandMore';
 type PopoverType = {
   children?: React.ReactNode;
   title: string;
-  color?: string; // Cor customizada para o botão
+  color?: string;
   Icon?: React.ElementType;
   popoverWidth?: string;
+  onClick?: () => void; // Adicione a prop onClick
 };
 
 const CustomButton = styled(Button)(({ theme, color = '#9C27B0' }) => ({
@@ -42,11 +43,16 @@ const PopoverSortOptions = ({
   color = '#9C27B0',
   Icon = ChevronDownIcon,
   popoverWidth = '220px',
+  onClick // Adicione a prop onClick
 }: PopoverType) => {
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setAnchorEl(event.currentTarget);
+    if (onClick) {
+      onClick(); // Execute a função onClick se ela for fornecida
+    } else {
+      setAnchorEl(event.currentTarget);
+    }
   };
 
   const handleClose = () => {
@@ -63,31 +69,32 @@ const PopoverSortOptions = ({
         variant="text"
         onClick={handleClick}
         endIcon={<Icon />}
-
       >
         {title}
       </CustomButton>
-      <Popover
-        id={id}
-        open={open}
-        anchorEl={anchorEl}
-        onClose={handleClose}
-        anchorOrigin={{
-          vertical: 'bottom',
-          horizontal: 'left',
-        }}
-        transformOrigin={{
-          vertical: 'top',
-          horizontal: 'left',
-        }}
-        sx={{
-          '.MuiPopover-paper': {
-            minWidth: popoverWidth,
-          },
-        }}
-      >
-        {children}
-      </Popover>
+      {!onClick && (
+        <Popover
+          id={id}
+          open={open}
+          anchorEl={anchorEl}
+          onClose={handleClose}
+          anchorOrigin={{
+            vertical: 'bottom',
+            horizontal: 'left',
+          }}
+          transformOrigin={{
+            vertical: 'top',
+            horizontal: 'left',
+          }}
+          sx={{
+            '.MuiPopover-paper': {
+              minWidth: popoverWidth,
+            },
+          }}
+        >
+          {children}
+        </Popover>
+      )}
     </div>
   );
 };
