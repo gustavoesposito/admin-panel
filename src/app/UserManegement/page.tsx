@@ -39,7 +39,11 @@ import PopoverSortOptions from "@/components/PopOver/PopOver";
 
 import styles from "./UserManagement.module.scss";
 import { useAppContext } from "@/context/StatusContext";
-import { DataGrid, GridToolbar, GridToolbarFilterButton } from "@mui/x-data-grid";
+import {
+  DataGrid,
+  GridToolbar,
+  GridToolbarFilterButton,
+} from "@mui/x-data-grid";
 import FilterPanel from "@/components/FilterPainel/FilterPainel";
 
 enum UserStatus {
@@ -73,36 +77,6 @@ export default function UserManagement() {
   const [filteredUsers, setFilteredUsers] = useState<User[]>(users);
   const [orderBy, setOrderBy] = useState("");
   const [isFilterPanelOpen, setIsFilterPanelOpen] = useState(false);
-
-
-  const columns = [
-    { field: 'id', headerName: 'ID', width: 90 },
-    { field: 'name', headerName: 'Nome', width: 150 },
-    {
-      field: 'phone',
-      headerName: 'Telefone',
-      width: 130,
-      hide: true,
-    },
-    {
-      field: 'registrationDate',
-      headerName: 'Data de cadastro',
-      width: 170,
-      hide: true,
-    },
-    {
-      field: 'status',
-      headerName: 'Status',
-      width: 100,
-      renderCell: (params) => (
-        <Tag theme={params.value === "Ativo" ? "positive" : "negative"}>
-          {params.value}
-        </Tag>
-      ),
-    },
-
-  ];
-
 
   const options: string[] = ["Ativar", "Inativar"];
 
@@ -227,7 +201,6 @@ export default function UserManagement() {
   const handleOpenFilterPanel = () => {
     setIsFilterPanelOpen(true);
   };
-
 
   const toggleUserStatus = (userId: number) => {
     toggleStatus(userId);
@@ -372,13 +345,7 @@ export default function UserManagement() {
                 </RadioGroup>
               </PopoverSortOptions>
 
-              <PopoverSortOptions
-                value={filter}
-                onChange={(e) => setFilter(e.target.value)}
-                title="Filtrar"
-              >
-
-              </PopoverSortOptions>
+              <PopoverSortOptions title="Filtrar"></PopoverSortOptions>
 
               <Button onClick={handleOpenFilterPanel}>Filtrar</Button>
             </Box>
@@ -402,7 +369,6 @@ export default function UserManagement() {
                         >
                           Telefone
                         </TableCell>
-
                         <TableCell
                           sx={{
                             display: { xs: "none", sm: "table-cell" },

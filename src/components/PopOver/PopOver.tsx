@@ -1,17 +1,17 @@
-import React, { ReactNode, useState } from 'react';
+import React, { useState } from 'react';
 import { styled } from '@mui/material/styles';
 import { Button, Popover } from '@mui/material';
 import ChevronDownIcon from '@mui/icons-material/ExpandMore';
 
 type PopoverType = {
-  children?: ReactNode;
+  children?: React.ReactNode;
   title: string;
-  color?: string;
+  color?: string; // Cor customizada para o botão
   Icon?: React.ElementType;
-  popoverWidth?: string
+  popoverWidth?: string;
 };
 
-const CustomButton = styled(Button)(({ color = '#9C27B0' }) => ({
+const CustomButton = styled(Button)(({ theme, color = '#9C27B0' }) => ({
   boxShadow: 'none',
   textTransform: 'none',
   fontSize: 16,
@@ -39,7 +39,7 @@ const CustomButton = styled(Button)(({ color = '#9C27B0' }) => ({
 const PopoverSortOptions = ({
   children,
   title,
-  color,
+  color = '#9C27B0',
   Icon = ChevronDownIcon,
   popoverWidth = '220px',
 }: PopoverType) => {
@@ -62,8 +62,8 @@ const PopoverSortOptions = ({
         aria-describedby={id}
         variant="text"
         onClick={handleClick}
-        endIcon={Icon ? <Icon /> : null}
-        color={color}
+        endIcon={<Icon />}
+
       >
         {title}
       </CustomButton>
@@ -72,13 +72,6 @@ const PopoverSortOptions = ({
         open={open}
         anchorEl={anchorEl}
         onClose={handleClose}
-        slotProps={{
-          paper: {
-            style: {
-              minWidth: popoverWidth,
-            },
-          },
-        }}
         anchorOrigin={{
           vertical: 'bottom',
           horizontal: 'left',
@@ -86,6 +79,11 @@ const PopoverSortOptions = ({
         transformOrigin={{
           vertical: 'top',
           horizontal: 'left',
+        }}
+        sx={{
+          '.MuiPopover-paper': {
+            minWidth: popoverWidth,
+          },
         }}
       >
         {children}

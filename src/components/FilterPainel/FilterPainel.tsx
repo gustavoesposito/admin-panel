@@ -14,25 +14,32 @@ import {
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 
-const initialFilter = {
+interface Filter {
+  column: string;
+  operator: string;
+  value: string;
+}
+
+
+const initialFilter: Filter = {
   column: '',
   operator: '',
   value: '',
 };
 
 const FilterPanel = () => {
-  const [filters, setFilters] = useState([initialFilter]);
+  const [filters, setFilters] = useState<Filter[]>([initialFilter]);
 
   const handleAddFilter = () => {
     setFilters([...filters, { ...initialFilter }]);
   };
 
-  const handleRemoveFilter = (index) => {
+  const handleRemoveFilter = (index: number) => {
     const newFilters = filters.filter((_, i) => i !== index);
     setFilters(newFilters);
   };
 
-  const handleFilterChange = (index, field, value) => {
+  const handleFilterChange = (index: number, field: keyof Filter, value: string) => {
     const newFilters = filters.map((filter, i) => {
       if (i === index) {
         return { ...filter, [field]: value };
