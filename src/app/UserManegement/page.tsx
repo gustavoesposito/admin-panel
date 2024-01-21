@@ -231,10 +231,12 @@ export default function UserManagement() {
             textColor="secondary"
             indicatorColor="secondary"
           >
-            <Tab label="Clientes" />
-            <Tab label="Endereços" />
-            <Tab label="Entregas" />
+            <Tab label="Clientes" sx={{ textTransform: 'none', fontSize: '16px' }} />
+            <Tab label="Endereços" sx={{ textTransform: 'none', fontSize: '16px' }} />
+            <Tab label="Entregas" sx={{ textTransform: 'none', fontSize: '16px' }} />
           </Tabs>
+
+
           <div className={styles.profile}>
             <IconButton
               size="large"

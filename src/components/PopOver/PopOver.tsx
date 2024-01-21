@@ -9,7 +9,7 @@ type PopoverType = {
   color?: string;
   Icon?: React.ElementType;
   popoverWidth?: string;
-  onClick?: () => void; // Adicione a prop onClick
+  onClick?: () => void;
 };
 
 const CustomButton = styled(Button)(({ theme, color = '#9C27B0' }) => ({
@@ -21,12 +21,6 @@ const CustomButton = styled(Button)(({ theme, color = '#9C27B0' }) => ({
   lineHeight: 1.5,
   backgroundColor: 'transparent',
   color: color,
-  fontFamily: [
-    '"Roboto"',
-    '"Helvetica"',
-    '"Arial"',
-    'sans-serif'
-  ].join(','),
   '& .MuiButton-endIcon': {
     color: color,
   },
@@ -43,13 +37,13 @@ const PopoverSortOptions = ({
   color = '#9C27B0',
   Icon = ChevronDownIcon,
   popoverWidth = '220px',
-  onClick // Adicione a prop onClick
+  onClick
 }: PopoverType) => {
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     if (onClick) {
-      onClick(); // Execute a função onClick se ela for fornecida
+      onClick();
     } else {
       setAnchorEl(event.currentTarget);
     }

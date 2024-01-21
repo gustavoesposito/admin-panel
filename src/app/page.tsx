@@ -65,11 +65,12 @@ export default function Login() {
 
           <Button
             variant="contained"
-            style={{ backgroundColor: '#9747FF', marginTop: 32 }}
+            style={{ backgroundColor: '#9747FF', marginTop: 32, textTransform: 'none' }}
             onClick={handleLogin}
           >
             Acessar plataforma
           </Button>
+
         </div>
 
         <div className={styles.loginForm}>
