@@ -31,9 +31,25 @@ bun dev
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
 
-## To make login you can use this e-mail and password 
+## Login
+
+-> To make login you can use this credentials:
 
 ```
   email: 'usuario@leans.com.br',
   senha: 'senha123',
 ```
+
+## Technology Stack
+
+```
+  Next 14
+  TypeScript
+  Context
+  SCSS
+  MUI
+  JEST
+  Testing-Library
+```
+
+
