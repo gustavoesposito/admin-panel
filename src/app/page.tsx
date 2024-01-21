@@ -45,10 +45,10 @@ export default function Login() {
               fullWidth
               label="E-mail"
               variant="outlined"
-              className={styles.email}
               error={!!error.email}
               helperText={error.email}
               onChange={(e) => setEmail(e.target.value)}
+              sx={{ mb: 2 }}
             />
             <TextField
               fullWidth

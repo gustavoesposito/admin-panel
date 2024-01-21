@@ -64,20 +64,24 @@
   .logo {
     margin-bottom: 1rem;
     margin-top: 64px;
+    position: relative;
   }
 
   .tabs {
+    order: 3;
     width: 100%;
     justify-content: space-between;
     flex-direction: row;
     align-items: center;
+    padding-top: 2rem;
   }
 
   .profile {
-    align-self: flex-end;
-    padding-right: 32px;
-    margin-top: -3.5rem;
-    margin-bottom: 1rem;
+    order: 2;
+    position: absolute;
+    right: 0;
+    top: 0;
+    margin-top: 3.5rem;
   }
 }
 
