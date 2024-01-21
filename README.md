@@ -1,5 +1,13 @@
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
+## Deploy
+
+I deployed this site by vercel, here is the link
+
+```
+https://admin-panel-ten-steel.vercel.app/
+ ```
+
 ## Getting Started
 
 -> Clone this project and install the dependencies:
