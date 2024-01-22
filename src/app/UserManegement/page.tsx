@@ -133,28 +133,33 @@ export default function UserManagement() {
   useEffect(() => {
     let updatedUsers = users;
 
+    if (searchTerm) {
+      updatedUsers = updatedUsers.filter(
+        user =>
+          user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          user.phone.includes(searchTerm) ||
+          user.id.toString().includes(searchTerm)
+      );
+    }
 
-    const filtersByColumn: FiltersByColumn = filters.reduce((acc, filter) => {
-      const { column, value } = filter;
-      if (value) {
-        (acc[column] = acc[column] || []).push(value.toLowerCase());
-      }
-      return acc;
-    }, {});
+    updatedUsers = filters.reduce((filtered, filter) => {
+      if (!filter.value) return filtered;
 
-
-    updatedUsers = updatedUsers.filter(user => {
-      return Object.entries(filtersByColumn).every(([column, values]) => {
-        if (column === 'registrationDate') {
-          return values.some(value => formatDateToCompare(user[column]) === value);
-        } else {
-          return values.some(value => user[column].toLowerCase().includes(value));
+      return filtered.filter(user => {
+        if (filter.column === 'name') {
+          return user.name.toLowerCase().includes(filter.value.toLowerCase());
+        } else if (filter.column === 'registrationDate') {
+          const userDate = formatDate(user.registrationDate);
+          const filterDate = formatDate(filter.value);
+          return userDate === filterDate;
         }
+        return true;
       });
-    });
+    }, updatedUsers);
 
-    setFilteredUsers(updatedUsers);
-  }, [users, searchTerm, filters]);
+    setFilteredUsers(sortUsers(updatedUsers, orderBy));
+  }, [users, orderBy, searchTerm, filters]);
+
 
 
 
