@@ -25,4 +25,8 @@ $negativeBackgroundColor: #fdf2f3;
   &.negative {
     color: #ea4356;
   }
+
+  @media (max-width: 768px) {
+    padding: 8px;
+  }
 }

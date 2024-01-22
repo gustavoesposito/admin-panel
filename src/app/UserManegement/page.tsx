@@ -367,23 +367,22 @@ export default function UserManagement() {
                   <TableContainer
                     component={Paper}
                     className={styles.userTable}
+                    sx={{
+                      maxHeight: '600px',
+                      overflowY: 'auto',
+                      overflowX: 'auto',
+                    }}
                   >
-                    <Table sx={{ width: "100%" }} aria-label="simple table">
+                    <Table stickyHeader sx={{ minWidth: 650 }} aria-label="simple table">
                       <TableHead>
                         <TableRow>
                           <TableCell>ID</TableCell>
                           <TableCell>Nome</TableCell>
                           <TableCell
-                            sx={{
-                              display: { xs: "none", sm: "table-cell" },
-                            }}
                           >
                             Telefone
                           </TableCell>
                           <TableCell
-                            sx={{
-                              display: { xs: "none", sm: "table-cell" },
-                            }}
                           >
                             Data de cadastro
                           </TableCell>{" "}
@@ -403,16 +402,16 @@ export default function UserManagement() {
                             <TableCell>{user?.id}</TableCell>
                             <TableCell>{user?.name}</TableCell>
                             <TableCell
-                              sx={{
-                                display: { xs: "none", sm: "table-cell" },
-                              }}
+                            // sx={{
+                            //   display: { xs: "none", sm: "table-cell" },
+                            // }}
                             >
                               {user?.phone}
                             </TableCell>
                             <TableCell
-                              sx={{
-                                display: { xs: "none", sm: "table-cell" },
-                              }}
+                            // sx={{
+                            //   display: { xs: "none", sm: "table-cell" },
+                            // }}
                             >
                               {user?.registrationDate}
                             </TableCell>
