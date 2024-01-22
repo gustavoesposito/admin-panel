@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { styled } from '@mui/material/styles';
 import { Button, Popover } from '@mui/material';
-import ChevronDownIcon from '@mui/icons-material/ExpandMore';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore'; // Ícone para estado fechado
+import ExpandLessIcon from '@mui/icons-material/ExpandLess'; // Ícone para estado aberto
 
 type PopoverType = {
   children?: React.ReactNode;
@@ -31,26 +32,30 @@ const CustomButton = styled(Button)(({ theme, color = '#9C27B0' }) => ({
   },
 }));
 
-const PopoverSortOptions = ({
+const PopoverSortOptions: React.FC<PopoverType> = ({
   children,
   title,
   color = '#9C27B0',
-  Icon = ChevronDownIcon,
+  Icon = ExpandMoreIcon, // Default Icon is ExpandMoreIcon
   popoverWidth = '220px',
   onClick
-}: PopoverType) => {
+}) => {
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
+  const [isExpanded, setIsExpanded] = useState(false); // Estado para controlar a expansão
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     if (onClick) {
       onClick();
+      setIsExpanded(!isExpanded); // Toggle the expanded state on click
     } else {
       setAnchorEl(event.currentTarget);
+      setIsExpanded(!isExpanded); // Toggle the expanded state on click
     }
   };
 
   const handleClose = () => {
     setAnchorEl(null);
+    setIsExpanded(false); // Set to false when the Popover is closed
   };
 
   const open = Boolean(anchorEl);
@@ -62,33 +67,31 @@ const PopoverSortOptions = ({
         aria-describedby={id}
         variant="text"
         onClick={handleClick}
-        endIcon={<Icon />}
+        endIcon={isExpanded ? <ExpandLessIcon /> : <Icon />}
       >
         {title}
       </CustomButton>
-      {!onClick && (
-        <Popover
-          id={id}
-          open={open}
-          anchorEl={anchorEl}
-          onClose={handleClose}
-          anchorOrigin={{
-            vertical: 'bottom',
-            horizontal: 'left',
-          }}
-          transformOrigin={{
-            vertical: 'top',
-            horizontal: 'left',
-          }}
-          sx={{
-            '.MuiPopover-paper': {
-              minWidth: popoverWidth,
-            },
-          }}
-        >
-          {children}
-        </Popover>
-      )}
+      <Popover
+        id={id}
+        open={open}
+        anchorEl={anchorEl}
+        onClose={handleClose}
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'left',
+        }}
+        transformOrigin={{
+          vertical: 'top',
+          horizontal: 'left',
+        }}
+        sx={{
+          '.MuiPopover-paper': {
+            minWidth: popoverWidth,
+          },
+        }}
+      >
+        {children}
+      </Popover>
     </div>
   );
 };

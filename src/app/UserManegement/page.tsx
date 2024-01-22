@@ -83,6 +83,7 @@ export default function UserManagement() {
   const [orderBy, setOrderBy] = useState("");
   const [isFilterPanelOpen, setIsFilterPanelOpen] = useState(false);
 
+
   const options: string[] = ["Ativar", "Inativar"];
 
   useEffect(() => {
@@ -160,9 +161,6 @@ export default function UserManagement() {
     setFilteredUsers(sortUsers(updatedUsers, orderBy));
   }, [users, orderBy, searchTerm, filters]);
 
-
-
-
   useEffect(() => {
     let updatedUsers = users;
 
@@ -202,11 +200,9 @@ export default function UserManagement() {
     return `${day}/${month}/${year}`;
   };
 
-  const formatDateToCompare = (dateStr: string) => {
-    const parts = dateStr.split("/");
-    return `${parts[2]}-${parts[1]}-${parts[0]}`;
+  const toggleFilterPanel = () => {
+    setIsFilterPanelOpen(!isFilterPanelOpen);
   };
-
 
   function sortUsers(users: User[], orderBy: string): User[] {
     return [...users].sort((a, b) => {
@@ -276,7 +272,7 @@ export default function UserManagement() {
   };
 
   const handleOpenFilterPanel = () => {
-    setIsFilterPanelOpen(true);
+    setIsFilterPanelOpen(prev => !prev);
   };
 
   const toggleUserStatus = (userId: number) => {
@@ -453,9 +449,12 @@ export default function UserManagement() {
                 />
               </Box>
 
-              {isFilterPanelOpen && (
-                <FilterPanel onFiltersApply={handleFiltersApply} />
-              )}
+              <FilterPanel
+                onFiltersApply={handleFiltersApply}
+                isOpen={isFilterPanelOpen}
+                togglePanel={handleOpenFilterPanel}
+              />
+
             </Box>
 
             <div className={styles.usersManagement}>

@@ -20,8 +20,16 @@ interface Filter {
   value: string;
 }
 
+interface Filter {
+  column: string;
+  operator: string;
+  value: string;
+}
+
 interface FilterPanelProps {
   onFiltersApply: (filters: Filter[]) => void;
+  isOpen: boolean;
+  togglePanel: () => void;
 }
 
 const initialFilter: Filter = {
@@ -30,15 +38,8 @@ const initialFilter: Filter = {
   value: "",
 };
 
-const FilterPanel: React.FC<FilterPanelProps> = ({ onFiltersApply }) => {
+const FilterPanel: React.FC<FilterPanelProps> = ({ onFiltersApply, isOpen, togglePanel }) => {
   const [filters, setFilters] = useState<Filter[]>([initialFilter]);
-  const [isPanelOpen, setIsPanelOpen] = useState(true);
-
-  useEffect(() => {
-    if (filters.length === 0) {
-      setIsPanelOpen(false);
-    }
-  }, [filters]);
 
   const handleAddFilter = () => {
     setFilters([...filters, { ...initialFilter }]);
@@ -64,8 +65,8 @@ const FilterPanel: React.FC<FilterPanelProps> = ({ onFiltersApply }) => {
   };
 
   const handleApplyFilters = () => {
-    setIsPanelOpen(false);
     onFiltersApply(filters);
+    togglePanel();
   };
 
   return (
@@ -74,9 +75,11 @@ const FilterPanel: React.FC<FilterPanelProps> = ({ onFiltersApply }) => {
       sx={{
         padding: 3,
         backgroundColor: "#fff",
-        maxWidth: "600px",
+        width: '100%',
+        maxWidth: { xs: '100%', sm: '600px' },
+        boxSizing: 'border-box',
         margin: "auto",
-        display: isPanelOpen ? "block" : "none",
+        display: isOpen ? "block" : "none",
       }}
     >
       <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
@@ -98,7 +101,9 @@ const FilterPanel: React.FC<FilterPanelProps> = ({ onFiltersApply }) => {
                 onChange={(e) =>
                   handleFilterChange(index, "column", e.target.value)
                 }
-                sx={{ width: "200px" }}
+                sx={{
+                  width: { xs: '100%', sm: '200px' }
+                }}
               >
                 <MenuItem value="id">ID</MenuItem>
                 <MenuItem value="name">Nome</MenuItem>
@@ -111,31 +116,18 @@ const FilterPanel: React.FC<FilterPanelProps> = ({ onFiltersApply }) => {
               <TextField
                 type="text"
                 placeholder="dd/mm/aaaa"
-                sx={{
-                  [`@media (min-width:600px)`]: {
-                    width: "30%",
-                  },
-                  [`@media (min-width:1200px)`]: {
-                    width: "80%",
-                  },
-                }}
+                fullWidth
+
               />
             ) : (
               <TextField
                 id={`filter-value-${index}`}
                 label="Valor"
                 value={filter.value}
+                fullWidth
                 onChange={(e) =>
                   handleFilterChange(index, "value", e.target.value)
                 }
-                sx={{
-                  [`@media (min-width:600px)`]: {
-                    width: "50%",
-                  },
-                  [`@media (min-width:1200px)`]: {
-                    width: "80%",
-                  },
-                }}
               />
             )}
             <IconButton color="error" onClick={() => handleRemoveFilter(index)}>
