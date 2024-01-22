@@ -55,6 +55,15 @@ interface User {
   status: UserStatus;
 }
 
+interface Filter {
+  column: keyof User | string;
+  value: string;
+}
+
+type FiltersByColumn = {
+  [key in keyof User]?: string[];
+};
+
 export default function UserManagement() {
   const { userStatus, toggleStatus } = useAppContext();
 
@@ -66,7 +75,7 @@ export default function UserManagement() {
   );
   const [value, setValue] = useState<number>(0);
   const [users, setUsers] = useState<User[]>([]);
-  const [filter, setFilter] = useState("");
+  const [filters, setFilters] = useState<Filter[]>([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [searchTerm, setSearchTerm] = useState("");
@@ -83,16 +92,14 @@ export default function UserManagement() {
           "https://38375370-103e-44f9-ba50-67c60bff12f7.mock.pstmn.io/users"
         );
 
-        setUsers(response.data);
+        const formattedUsers = response.data.map((user) => ({
+          ...user,
+          registrationDate: reformatDate(user.registrationDate),
+        }));
+
+        setUsers(formattedUsers);
       } catch (error) {
-        if (axios.isAxiosError(error)) {
-          console.error(
-            "There was an error fetching the users!",
-            error.message
-          );
-        } else {
-          console.error("An unexpected error occurred", error);
-        }
+        console.log(error);
       }
     };
 
@@ -104,10 +111,6 @@ export default function UserManagement() {
       setFilteredUsers(users);
     }
   }, [users, searchTerm]);
-
-  const handleProfileMenu = (event: React.MouseEvent<HTMLElement>) => {
-    setProfileMenuAnchorEl(event.currentTarget);
-  };
 
   useEffect(() => {
     let updatedUsers =
@@ -123,29 +126,102 @@ export default function UserManagement() {
     setFilteredUsers(sortUsers(updatedUsers, orderBy));
   }, [users, orderBy, searchTerm]);
 
-  function sortUsers(users: User[], orderBy: string): User[] {
-    switch (orderBy) {
-      case "Nome":
-        return [...users].sort((a, b) => a.name.localeCompare(b.name));
-      case "ID":
-        return [...users].sort((a, b) => a.id - b.id);
-      case "Telefone":
-        return [...users].sort((a, b) => a.phone.localeCompare(b.phone));
-      case "Data de cadastro":
-        return [...users].sort((a, b) => {
-          const dateA = new Date(
-            a.registrationDate.split("/").reverse().join("-")
-          ).getTime();
-          const dateB = new Date(
-            b.registrationDate.split("/").reverse().join("-")
-          ).getTime();
-          return dateA - dateB;
-        });
-      case "Status":
-        return [...users].sort((a, b) => a.status.localeCompare(b.status));
-      default:
-        return users;
+  const handleProfileMenu = (event: React.MouseEvent<HTMLElement>) => {
+    setProfileMenuAnchorEl(event.currentTarget);
+  };
+
+  useEffect(() => {
+    let updatedUsers = users;
+
+
+    const filtersByColumn: FiltersByColumn = filters.reduce((acc, filter) => {
+      const { column, value } = filter;
+      if (value) {
+        (acc[column] = acc[column] || []).push(value.toLowerCase());
+      }
+      return acc;
+    }, {});
+
+
+    updatedUsers = updatedUsers.filter(user => {
+      return Object.entries(filtersByColumn).every(([column, values]) => {
+        if (column === 'registrationDate') {
+          return values.some(value => formatDateToCompare(user[column]) === value);
+        } else {
+          return values.some(value => user[column].toLowerCase().includes(value));
+        }
+      });
+    });
+
+    setFilteredUsers(updatedUsers);
+  }, [users, searchTerm, filters]);
+
+
+
+  useEffect(() => {
+    let updatedUsers = users;
+
+    if (searchTerm) {
+      updatedUsers = updatedUsers.filter(
+        user =>
+          user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          user.phone.includes(searchTerm) ||
+          user.id.toString().includes(searchTerm)
+      );
     }
+
+    updatedUsers = filters.reduce((filtered, filter) => {
+      if (!filter.value) return filtered;
+
+      return filtered.filter(user => {
+        if (filter.column === 'name') {
+          return user.name.toLowerCase().includes(filter.value.toLowerCase());
+        } else if (filter.column === 'registrationDate') {
+          const userDate = formatDate(user.registrationDate);
+          const filterDate = formatDate(filter.value);
+          return userDate === filterDate;
+        }
+        return true;
+      });
+    }, updatedUsers);
+
+    setFilteredUsers(sortUsers(updatedUsers, orderBy));
+  }, [users, orderBy, searchTerm, filters]);
+
+  function reformatDate(dateStr: string) {
+    return dateStr.split("-").reverse().join("/");
+  }
+
+  const formatDate = (dateStr: string) => {
+    const [year, month, day] = dateStr.split('/');
+    return `${day}/${month}/${year}`;
+  };
+
+  const formatDateToCompare = (dateStr: string) => {
+    const parts = dateStr.split("/");
+    return `${parts[2]}-${parts[1]}-${parts[0]}`;
+  };
+
+
+  function sortUsers(users: User[], orderBy: string): User[] {
+    return [...users].sort((a, b) => {
+      switch (orderBy) {
+        case "Nome":
+          return a.name.localeCompare(b.name);
+        case "ID":
+          return a.id - b.id;
+        case "Telefone":
+          return a.phone.localeCompare(b.phone);
+        case "Data de cadastro":
+          const dateA = new Date(a.registrationDate).getTime();
+          const dateB = new Date(b.registrationDate).getTime();
+          return dateA - dateB;
+        case "Status":
+          return a.status.localeCompare(b.status);
+        default:
+          return 0;
+      }
+    });
   }
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -215,6 +291,12 @@ export default function UserManagement() {
     );
   };
 
+  const handleFiltersApply = (appliedFilters: Filter[]) => {
+    setFilters(appliedFilters);
+  };
+
+
+
   return (
     <>
       <Head>
@@ -231,11 +313,19 @@ export default function UserManagement() {
             textColor="secondary"
             indicatorColor="secondary"
           >
-            <Tab label="Clientes" sx={{ textTransform: 'none', fontSize: '16px' }} />
-            <Tab label="Endereços" sx={{ textTransform: 'none', fontSize: '16px' }} />
-            <Tab label="Entregas" sx={{ textTransform: 'none', fontSize: '16px' }} />
+            <Tab
+              label="Clientes"
+              sx={{ textTransform: "none", fontSize: "16px" }}
+            />
+            <Tab
+              label="Endereços"
+              sx={{ textTransform: "none", fontSize: "16px" }}
+            />
+            <Tab
+              label="Entregas"
+              sx={{ textTransform: "none", fontSize: "16px" }}
+            />
           </Tabs>
-
 
           <div className={styles.profile}>
             <IconButton
@@ -355,10 +445,12 @@ export default function UserManagement() {
                 <PopoverSortOptions
                   title="Filtrar"
                   onClick={handleOpenFilterPanel}
-                ></PopoverSortOptions>
+                />
               </Box>
 
-              {isFilterPanelOpen && <FilterPanel />}
+              {isFilterPanelOpen && (
+                <FilterPanel onFiltersApply={handleFiltersApply} />
+              )}
             </Box>
 
             <div className={styles.usersManagement}>
@@ -368,24 +460,22 @@ export default function UserManagement() {
                     component={Paper}
                     className={styles.userTable}
                     sx={{
-                      maxHeight: '600px',
-                      overflowY: 'auto',
-                      overflowX: 'auto',
+                      maxHeight: "600px",
+                      overflowY: "auto",
+                      overflowX: "auto",
                     }}
                   >
-                    <Table stickyHeader sx={{ minWidth: 650 }} aria-label="simple table">
+                    <Table
+                      stickyHeader
+                      sx={{ minWidth: 650 }}
+                      aria-label="simple table"
+                    >
                       <TableHead>
                         <TableRow>
                           <TableCell>ID</TableCell>
                           <TableCell>Nome</TableCell>
-                          <TableCell
-                          >
-                            Telefone
-                          </TableCell>
-                          <TableCell
-                          >
-                            Data de cadastro
-                          </TableCell>{" "}
+                          <TableCell>Telefone</TableCell>
+                          <TableCell>Data de cadastro</TableCell>{" "}
                           <TableCell>Status</TableCell>
                           <TableCell></TableCell>
                         </TableRow>
@@ -401,20 +491,8 @@ export default function UserManagement() {
                           >
                             <TableCell>{user?.id}</TableCell>
                             <TableCell>{user?.name}</TableCell>
-                            <TableCell
-                            // sx={{
-                            //   display: { xs: "none", sm: "table-cell" },
-                            // }}
-                            >
-                              {user?.phone}
-                            </TableCell>
-                            <TableCell
-                            // sx={{
-                            //   display: { xs: "none", sm: "table-cell" },
-                            // }}
-                            >
-                              {user?.registrationDate}
-                            </TableCell>
+                            <TableCell>{user?.phone}</TableCell>
+                            <TableCell>{formatDate(user.registrationDate)}</TableCell>
                             <TableCell>
                               <Tag
                                 theme={

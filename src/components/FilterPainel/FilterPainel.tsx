@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+
 import {
   Box,
   Button,
@@ -9,15 +10,18 @@ import {
   FormControl,
   InputLabel,
   Paper,
-  Typography,
 } from "@mui/material";
-import DeleteIcon from "@mui/icons-material/Delete";
-import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
+import CloseIcon from "@mui/icons-material/Close";
+import AddIcon from "@mui/icons-material/Add";
 
 interface Filter {
   column: string;
   operator: string;
   value: string;
+}
+
+interface FilterPanelProps {
+  onFiltersApply: (filters: Filter[]) => void;
 }
 
 const initialFilter: Filter = {
@@ -26,9 +30,15 @@ const initialFilter: Filter = {
   value: "",
 };
 
-const FilterPanel = () => {
+const FilterPanel: React.FC<FilterPanelProps> = ({ onFiltersApply }) => {
   const [filters, setFilters] = useState<Filter[]>([initialFilter]);
   const [isPanelOpen, setIsPanelOpen] = useState(true);
+
+  useEffect(() => {
+    if (filters.length === 0) {
+      setIsPanelOpen(false);
+    }
+  }, [filters]);
 
   const handleAddFilter = () => {
     setFilters([...filters, { ...initialFilter }]);
@@ -55,6 +65,7 @@ const FilterPanel = () => {
 
   const handleApplyFilters = () => {
     setIsPanelOpen(false);
+    onFiltersApply(filters);
   };
 
   return (
@@ -68,9 +79,6 @@ const FilterPanel = () => {
         display: isPanelOpen ? "block" : "none",
       }}
     >
-      <Typography variant="h6" sx={{ marginBottom: 2 }}>
-        Filtros
-      </Typography>
       <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
         {filters.map((filter, index) => (
           <Box
@@ -81,6 +89,7 @@ const FilterPanel = () => {
               <InputLabel id={`filter-column-label-${index}`}>
                 Coluna
               </InputLabel>
+
               <Select
                 labelId={`filter-column-label-${index}`}
                 id={`filter-column-${index}`}
@@ -91,58 +100,75 @@ const FilterPanel = () => {
                 }
                 sx={{ width: "200px" }}
               >
-                <MenuItem value="dataCadastro">Data de cadastro</MenuItem>
+                <MenuItem value="id">ID</MenuItem>
+                <MenuItem value="name">Nome</MenuItem>
+                <MenuItem value="phone">Telefone</MenuItem>
+                <MenuItem value="registrationDate">Data de cadastro</MenuItem>
               </Select>
             </FormControl>
 
-            <FormControl fullWidth>
-              <InputLabel id={`filter-operator-label-${index}`}>
-                Operador
-              </InputLabel>
-              <Select
-                labelId={`filter-operator-label-${index}`}
-                id={`filter-operator-${index}`}
-                value={filter.operator}
-                label="Operador"
+            {filter.column === 'registrationDate' ? (
+              <TextField
+                type="text"
+                placeholder="dd/mm/aaaa"
+                sx={{
+                  [`@media (min-width:600px)`]: {
+                    width: "30%",
+                  },
+                  [`@media (min-width:1200px)`]: {
+                    width: "80%",
+                  },
+                }}
+              />
+            ) : (
+              <TextField
+                id={`filter-value-${index}`}
+                label="Valor"
+                value={filter.value}
                 onChange={(e) =>
-                  handleFilterChange(index, "operator", e.target.value)
+                  handleFilterChange(index, "value", e.target.value)
                 }
-                sx={{ width: "150px" }}
-              >
-                <MenuItem value="equals">é</MenuItem>
-                <MenuItem value="notEquals">não é</MenuItem>
-              </Select>
-            </FormControl>
-
-            <TextField
-              id={`filter-value-${index}`}
-              label="Valor"
-              value={filter.value}
-              fullWidth
-              onChange={(e) =>
-                handleFilterChange(index, "value", e.target.value)
-              }
-              sx={{ width: "200px" }}
-            />
-
+                sx={{
+                  [`@media (min-width:600px)`]: {
+                    width: "50%",
+                  },
+                  [`@media (min-width:1200px)`]: {
+                    width: "80%",
+                  },
+                }}
+              />
+            )}
             <IconButton color="error" onClick={() => handleRemoveFilter(index)}>
-              <DeleteIcon />
+              <CloseIcon />
             </IconButton>
           </Box>
         ))}
       </Box>
-      <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 1, mt: 2 }}>
+
+      <Box sx={{ display: "flex", justifyContent: "space-between", mt: 2 }}>
         <Button
-          startIcon={<AddCircleOutlineIcon />}
+          startIcon={<AddIcon sx={{ color: "#9C26B0" }} />}
           onClick={handleAddFilter}
-          sx={{ flexGrow: 1 }}
+          sx={{
+            color: "#9C26B0",
+            textTransform: 'none',
+            "&:hover": {
+              bgcolor: "transparent",
+            },
+          }}
         >
           Adicionar filtro
         </Button>
         <Button
-          variant="contained"
           onClick={handleApplyFilters}
-          sx={{ flexGrow: 1 }}
+          sx={{
+            color: "#9C26B0",
+            background: "transparent",
+            textTransform: 'none',
+            "&:hover": {
+              bgcolor: "transparent",
+            },
+          }}
         >
           Aplicar filtros
         </Button>
