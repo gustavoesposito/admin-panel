@@ -36,26 +36,26 @@ const PopoverSortOptions: React.FC<PopoverType> = ({
   children,
   title,
   color = '#9C27B0',
-  Icon = ExpandMoreIcon, // Default Icon is ExpandMoreIcon
+  Icon = ExpandMoreIcon,
   popoverWidth = '220px',
   onClick
 }) => {
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
-  const [isExpanded, setIsExpanded] = useState(false); // Estado para controlar a expansão
+  const [isExpanded, setIsExpanded] = useState(false);
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     if (onClick) {
       onClick();
-      setIsExpanded(!isExpanded); // Toggle the expanded state on click
+      setIsExpanded(!isExpanded);
     } else {
       setAnchorEl(event.currentTarget);
-      setIsExpanded(!isExpanded); // Toggle the expanded state on click
+      setIsExpanded(!isExpanded);
     }
   };
 
   const handleClose = () => {
     setAnchorEl(null);
-    setIsExpanded(false); // Set to false when the Popover is closed
+    setIsExpanded(false);
   };
 
   const open = Boolean(anchorEl);
