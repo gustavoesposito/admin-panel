@@ -1,9 +1,7 @@
 "use client";
-import React, { useState, useEffect, ReactNode } from "react";
+import React, { useState, useEffect } from "react";
 import Head from "next/head";
 import { useAppContext } from "@/context/StatusContext";
-
-import axios from "axios";
 
 import {
   Avatar,
@@ -41,6 +39,7 @@ import PopoverSortOptions from "@/components/PopOver/PopOver";
 import FilterPanel from "@/components/FilterPainel/FilterPainel";
 
 import styles from "./UserManagement.module.scss";
+import api from "@/services/axios";
 
 enum UserStatus {
   Ativo = "Ativo",
@@ -89,9 +88,7 @@ export default function UserManagement() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get<User[]>(
-          "https://38375370-103e-44f9-ba50-67c60bff12f7.mock.pstmn.io/users"
-        );
+        const response = await api.get<User[]>("/users");
 
         const formattedUsers = response.data.map((user) => ({
           ...user,
