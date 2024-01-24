@@ -40,6 +40,7 @@ import FilterPanel from "@/components/FilterPainel/FilterPainel";
 
 import styles from "./UserManagement.module.scss";
 import api from "@/services/axios";
+import axios from "axios";
 
 enum UserStatus {
   Ativo = "Ativo",
@@ -88,8 +89,9 @@ export default function UserManagement() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await api.get<User[]>("/users");
-
+        const response = await axios.get<User[]>(
+          "https://38375370-103e-44f9-ba50-67c60bff12f7.mock.pstmn.io/users"
+        );
         const formattedUsers = response.data.map((user) => ({
           ...user,
           registrationDate: reformatDate(user.registrationDate),
