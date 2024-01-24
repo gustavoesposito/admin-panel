@@ -39,7 +39,6 @@ import PopoverSortOptions from "@/components/PopOver/PopOver";
 import FilterPanel from "@/components/FilterPainel/FilterPainel";
 
 import styles from "./UserManagement.module.scss";
-import api from "@/services/axios";
 import axios from "axios";
 
 enum UserStatus {
